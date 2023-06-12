@@ -2,8 +2,10 @@ var mongoose = require('mongoose');
 // Setup schema
 var messageSchema = mongoose.Schema({
     user_id: String,
+    user_name: String,
     message: String,
     status: String,
+    isAdmin: Boolean, 
     sent_date: {
         type: Date,
         default: Date.now

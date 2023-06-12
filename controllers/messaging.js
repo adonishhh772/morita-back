@@ -1,20 +1,39 @@
 Message = require('../models/messaging');
 var validateJson = require('../helpers/validateJson');
 
+
+// Handle index actions
+exports.index = function (req, res) {
+    Message.get(function (err, msg) {
+        if (err)
+            return res.json({
+                status: "error",
+                message: err,
+            });
+
+        res.json({
+            status: "success",
+            message: "Message retrieved successfully",
+            data: msg
+        });
+    });
+};
+
 // Handle create contact actions
 exports.new = function (req, res) {
-    var message = new Message();
+    var messaging = new Message();
     var data = validateJson.validateJson(req.body);
-    message.user_id = data.id;
-    message.message = data.message;
-    message.status = data.status;
+    messaging.user_id = data.user_id;
+    messaging.user_name = data.name;
+    messaging.message = data.message;
+    messaging.status = data.status;
 // save the contact and check for errors
-    message.save(function (err) {
+messaging.save(function (err) {
         if (err)
             return res.json({message:err});
         res.json({
             message: 'Message Sent!',
-            data: message
+            data: messaging
         });
     });
 };
@@ -22,7 +41,7 @@ exports.new = function (req, res) {
 
 // Handle view contact info
 exports.view = function (req, res) {
-    Message.findOne({ user_id: req.body.id }, function (err, messaging) {
+    Message.find({ user_id: req.params.id }, function (err, messaging) {
         if (err)
             return res.send(err);
         res.json({
@@ -56,21 +75,35 @@ exports.update = function (req, res) {
     });
 };
 // Handle delete contact
+// exports.delete = async function (req, res) {
+//     Message.findById(req.params.id, function (err, messaging) {
+//         if (err)
+//             return res.send(err);
+
+//         messaging.status = 'deleted';
+//         messaging.modified_date = Date.now();
+// // save the contact and check for errors
+//         messaging.save(function (err) {
+//             if (err)
+//                 return res.json(err);
+//             res.json({
+//                 message: 'Message deleted',
+//                 data: messaging
+//             });
+//         });
+//     });
+// };
+
+// Handle delete contact
 exports.delete = async function (req, res) {
-    Message.findById(req.params.id, function (err, messaging) {
+    await Message.remove({
+        _id: req.params.id
+    }, function (err, product) {
         if (err)
             return res.send(err);
-
-        messaging.status = 'deleted';
-        messaging.modified_date = Date.now();
-// save the contact and check for errors
-        messaging.save(function (err) {
-            if (err)
-                return res.json(err);
-            res.json({
-                message: 'Message deleted',
-                data: messaging
-            });
+        res.json({
+            status: "success",
+            message: 'Product deleted Successfully'
         });
     });
 };

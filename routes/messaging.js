@@ -5,7 +5,8 @@ verifyToken = require('../helpers/auth');
 /* GET users listing. */
 
 router.route('/')
-    .post(verifyToken.verifyToken,messageController.new);
+    .post(verifyToken.verifyToken,messageController.new)
+    .get(verifyToken.verifyToken,messageController.index);
 router.route('/:id')
     .get(verifyToken.verifyToken,messageController.view)
     .put(verifyToken.verifyToken,messageController.update)
